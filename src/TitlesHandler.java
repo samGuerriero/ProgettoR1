@@ -4,14 +4,14 @@ import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * Created by marco on 21/10/16.
- * The XML parser: gets all the titles in the Wiktionary XML and call the HTML parsing method if necessary (from the characters method).
+ * The XML parser: gets all the titles in the Wiktionary XML and call the HTML parsing method if necessary
+ * (from the characters method).
  */
 public class TitlesHandler extends DefaultHandler {
 
     private boolean title=false;
     private boolean startCheck=false;
     private String startWord=null;
-    private HTMLParser html_parser = new HTMLParser();
 
 
     public TitlesHandler() {
@@ -35,7 +35,7 @@ public class TitlesHandler extends DefaultHandler {
 
     @Override
     public void endElement(String uri, String localName, String qName) throws SAXException {
-        //TODO: maybe useless for us
+        //maybe useless for us
     }
 
     @Override
@@ -43,9 +43,11 @@ public class TitlesHandler extends DefaultHandler {
         if (title) {
             String foundTitle = new String(ch, start, length);
             System.out.println("Title: " + foundTitle);
-            //TODO: Check if it is a word that interest us or not and get infos
+            //Check if it is a word that interest us or not and get infos
             if (startCheck) {
-                //we want to check the word
+                if (!foundTitle.contains(":")) {
+                    HTMLParser hparser = new HTMLParser(foundTitle);
+                }
             }
             else {
                 if (foundTitle.equals(startWord)) startCheck=true;
