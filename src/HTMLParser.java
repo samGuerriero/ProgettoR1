@@ -36,18 +36,27 @@ public class HTMLParser {
 
     //Parser for the single table
     static void ParseTable(Element table) {
+        boolean noskip=true;
         //TODO: find a way to detect if a table is interesting or not for us (maybe when we couldn't detect language)
-        String lang=getLanguage(table);
-        if (lang.isEmpty()) System.out.println("\tLanguage not found");
-        else System.out.println("\t"+lang);
+        if (table.className().equalsIgnoreCase("audiotable")) {
+            noskip=false;
+            System.out.println("\tTable skipped");
+        }
+        if (noskip) {
+            String lang = getLanguage(table);
+            String pos = getPOS(table, lang);
+            if (lang.isEmpty()) lang = "Language not found";
+            if (pos.isEmpty()) pos = "Part of Speech not found";
+            System.out.println("\t" + lang + "\t" + pos);
+        }
     }
 
-    //Get the language of the table content
-    static String getLanguage(Element table) {
+    //Get the language of a node (usually of a table)
+    static String getLanguage(Element element) {
         boolean found=false;
         String lang = new String("");
         //Get the node at the same level of the XML tag with the language
-        Element divFrame = table;
+        Element divFrame = element;
         while (!divFrame.parent().id().equalsIgnoreCase("mw-content-text")) {
             divFrame=divFrame.parent();
         }
@@ -63,6 +72,35 @@ public class HTMLParser {
             divFrame = divFrame.previousElementSibling();
         }
         return lang;
+    }
+
+    //Get the POS of table content
+    static String getPOS(Element table, String lang) {
+        boolean found=false;
+        String pos=new String("");
+        Element divFrame=table;
+        //Get the node at the same level of the XML tag with the language
+        while(!divFrame.parent().id().equalsIgnoreCase("mw-content-text")) {
+            divFrame=divFrame.parent();
+        }
+        //Search the node containing the POS
+        while (!found && divFrame!=null) {
+            if (divFrame.tagName().equalsIgnoreCase("h4")||divFrame.tagName().equalsIgnoreCase("h5")) {
+                Element posel=divFrame.child(0);
+                if (posel.className().equalsIgnoreCase("mw-headline")) {
+                    //Check if the POS found too is related to the table language
+                    if (lang.equalsIgnoreCase(getLanguage(divFrame))) {
+                        pos = posel.text();
+                    }
+                    else {
+                        pos="POS language not matched";
+                    }
+                    found = true;
+                }
+            }
+            divFrame = divFrame.previousElementSibling();
+        }
+        return pos;
     }
 
 }
