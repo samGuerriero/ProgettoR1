@@ -13,7 +13,7 @@ import java.util.Iterator;
 
 public class HTMLParser {
 
-    public HTMLParser( String word) {
+    public HTMLParser( String word ) {
         try {
             Document doc = Jsoup.connect("https://en.wiktionary.org/wiki/" + word).get();
             ParseText(doc);
@@ -37,7 +37,7 @@ public class HTMLParser {
     //Parser for the single table
     static void ParseTable(Element table) {
         boolean noskip=true;
-        //TODO: find a way to detect if a table is interesting or not for us (maybe when we couldn't detect language)
+        //TODO: find a way to detect if a table is interesting or not for us
         if (table.className().equalsIgnoreCase("audiotable")) {
             noskip=false;
             System.out.println("\tTable skipped");
