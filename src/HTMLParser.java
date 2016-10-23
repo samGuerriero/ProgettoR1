@@ -9,9 +9,12 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 
 public class HTMLParser {
+
 
     public HTMLParser( String word ) {
         try {
@@ -21,9 +24,23 @@ public class HTMLParser {
         catch (IOException e) {}
     }
 
+    static boolean allowedPos(String pos) {
+        boolean flag=false;
+        ArrayList<String> allowedpos = new ArrayList<>(Arrays.asList("Noun", "Verb", "Adjective", "Conjugation", "Inflection", "Declension"));
+        Iterator<String> iterator = allowedpos.iterator();
+        while (iterator.hasNext() && !flag) {
+            String element = iterator.next();
+            if (element.equalsIgnoreCase(pos)) {
+                flag=true;
+            }
+        }
+        return flag;
+    }
+
     //Parser for the HTML page
     static void ParseText(Document doc) {
         boolean tableflag=false;
+        boolean listflag=false;
         Elements tables= doc.getElementsByTag("table");
         Iterator<Element> tableiterator = tables.iterator();
         while (tableiterator.hasNext()) {
@@ -31,24 +48,45 @@ public class HTMLParser {
             Element table = tableiterator.next();
             ParseTable(table);
         }
-        if (!tableflag) System.out.println("\tNo tables for this word");
+        //if (!tableflag) System.out.println("\tNo tables for this word");
+        //Parse the Parenthetical lists
+        Elements lists = doc.getElementsByTag("p");
+        Iterator<Element> listiterator = lists.iterator();
+        while (listiterator.hasNext()) {
+            listflag=true;
+            Element list = listiterator.next();
+            ParseList(list);
+        }
     }
 
     //Parser for the single table
     static void ParseTable(Element table) {
         boolean noskip=true;
         //TODO: find a way to detect if a table is interesting or not for us
-        if (table.className().equalsIgnoreCase("audiotable")) {
+        if (table.className().equalsIgnoreCase("audiotable")||table.className().equalsIgnoreCase("toc")) {
             noskip=false;
-            System.out.println("\tTable skipped");
+            //System.out.println("\tTable skipped");
         }
         if (noskip) {
             String lang = getLanguage(table);
             String pos = getPOS(table, lang);
             if (lang.isEmpty()) lang = "Language not found";
             if (pos.isEmpty()) pos = "Part of Speech not found";
-            System.out.println("\t" + lang + "\t" + pos);
+            if (allowedPos(pos))
+                System.out.println("\t" + lang + "\t" + pos);
         }
+    }
+
+    //Parser for the single list
+    static void ParseList(Element list) {
+        boolean noskip=true;
+        String lang = getLanguage(list);
+        String pos = getPOS(list, lang);
+        if (lang.isEmpty()) lang = "Language not found";
+        if (pos.isEmpty()) pos = "Part of Speech not found";
+        if (allowedPos(pos))
+            System.out.println("\t" + lang + "\t" + pos);
+
     }
 
     //Get the language of a node (usually of a table)
@@ -85,7 +123,7 @@ public class HTMLParser {
         }
         //Search the node containing the POS
         while (!found && divFrame!=null) {
-            if (divFrame.tagName().equalsIgnoreCase("h4")||divFrame.tagName().equalsIgnoreCase("h5")) {
+            if (divFrame.tagName().equalsIgnoreCase("h3")||divFrame.tagName().equalsIgnoreCase("h4")||divFrame.tagName().equalsIgnoreCase("h5")) {
                 Element posel=divFrame.child(0);
                 if (posel.className().equalsIgnoreCase("mw-headline")) {
                     //Check if the POS found too is related to the table language
