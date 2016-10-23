@@ -48,6 +48,7 @@ public class TitlesHandler extends DefaultHandler {
                 if (!foundTitle.contains(":")) {
                     HTMLParser hparser = new HTMLParser(foundTitle);
                 }
+                else System.out.println("\tWord not considered");
             }
             else {
                 if (foundTitle.equals(startWord)) startCheck=true;

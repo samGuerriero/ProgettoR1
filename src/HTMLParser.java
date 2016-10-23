@@ -23,20 +23,23 @@ public class HTMLParser {
 
     //Parser for the HTML page
     static void ParseText(Document doc) {
+        boolean tableflag=false;
         Elements tables= doc.getElementsByTag("table");
         Iterator<Element> tableiterator = tables.iterator();
         while (tableiterator.hasNext()) {
+            tableflag=true;
             Element table = tableiterator.next();
             ParseTable(table);
         }
+        if (!tableflag) System.out.println("\tNo tables for this word");
     }
 
     //Parser for the single table
     static void ParseTable(Element table) {
         //TODO: find a way to detect if a table is interesting or not for us (maybe when we couldn't detect language)
         String lang=getLanguage(table);
-        if (lang.isEmpty()) System.out.println("Language not found");
-        else System.out.println(lang);
+        if (lang.isEmpty()) System.out.println("\tLanguage not found");
+        else System.out.println("\t"+lang);
     }
 
     //Get the language of the table content
@@ -44,7 +47,10 @@ public class HTMLParser {
         boolean found=false;
         String lang = new String("");
         //Get the node at the same level of the XML tag with the language
-        Element divFrame = table.parent().parent();
+        Element divFrame = table;
+        while (!divFrame.parent().id().equalsIgnoreCase("mw-content-text")) {
+            divFrame=divFrame.parent();
+        }
         //Search the node containing the language
         while (!found && divFrame!=null) {
             if (divFrame.tagName().equalsIgnoreCase("h2")) {
