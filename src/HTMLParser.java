@@ -19,7 +19,7 @@ public class HTMLParser {
     public HTMLParser( String word ) {
         try {
             Document doc = Jsoup.connect("https://en.wiktionary.org/wiki/" + word).get();
-            ParseText(doc);
+            ParseText(doc, word);
         }
         catch (IOException e) {}
     }
@@ -38,7 +38,7 @@ public class HTMLParser {
     }
 
     //Parser for the HTML page
-    static void ParseText(Document doc) {
+    static void ParseText(Document doc, String word) {
         boolean tableflag=false;
         boolean listflag=false;
         Elements tables= doc.getElementsByTag("table");
@@ -46,9 +46,10 @@ public class HTMLParser {
         while (tableiterator.hasNext()) {
             tableflag=true;
             Element table = tableiterator.next();
-            ParseTable(table);
+            //TODO: implement the class used below and the clesses related to it, then choose how to use them
+            PrepTable p_table = ParseTable(table, word);
         }
-        //if (!tableflag) System.out.println("\tNo tables for this word");
+        if (!tableflag) System.out.println("\tNo tables for this word");
         //Parse the Parenthetical lists
         Elements lists = doc.getElementsByTag("p");
         Iterator<Element> listiterator = lists.iterator();
@@ -57,11 +58,13 @@ public class HTMLParser {
             Element list = listiterator.next();
             ParseList(list);
         }
+        if (!listflag) System.out.println("\tNo lists for this word");
     }
 
     //Parser for the single table
-    static void ParseTable(Element table) {
+    static PrepTable ParseTable(Element table, String title) {
         boolean noskip=true;
+
         //TODO: find a way to detect if a table is interesting or not for us
         if (table.className().equalsIgnoreCase("audiotable")||table.className().equalsIgnoreCase("toc")) {
             noskip=false;
@@ -74,7 +77,9 @@ public class HTMLParser {
             if (pos.isEmpty()) pos = "Part of Speech not found";
             if (allowedPos(pos))
                 System.out.println("\t" + lang + "\t" + pos);
+                return new PrepTable(table, title, lang, pos);
         }
+        return null;
     }
 
     //Parser for the single list
