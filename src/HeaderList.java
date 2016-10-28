@@ -7,7 +7,9 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by marco on 27/10/16.
@@ -26,12 +28,22 @@ public class HeaderList {
             while((currline=reader.readLine()) != null) {
                 headers=frequentCells(currline,headers);
             }
+            headers=removeNotFrequent(headers,frequence);
         }
         catch (IOException e) {}
     }
 
     public Map<String, Integer> getHeaders() {
         return new HashMap<>(headers);
+    }
+
+    public void printHeaders() {
+        Set<String> keys = headers.keySet();
+        Iterator<String> iterator = keys.iterator();
+        while (iterator.hasNext()) {
+            String key = iterator.next();
+            System.out.println(key+", "+headers.get(key).toString());
+        }
     }
 
     private static Map<String, Integer> frequentCells(String page, Map<String,Integer> headers){
@@ -69,24 +81,15 @@ public class HeaderList {
         return headers;
     }
 
-    /*private static Map<String, Integer> checkCell(Element cell, Map<String, Integer> headers) {
-        if (cell.hasText()) {
-            String celltext = cell.text().trim();
-            if (!celltext.isEmpty()) {
-                if (headers.containsKey(celltext)) {
-                    headers.put(celltext, headers.get(celltext)+1);
-                }
-                else {
-                    headers.put(celltext, new Integer(1));
-                }
+    private static Map<String, Integer> removeNotFrequent(Map<String, Integer> headers, int frequence) {
+        Iterator<Map.Entry<String,Integer>> iter = headers.entrySet().iterator();
+        while (iter.hasNext()) {
+            Map.Entry<String,Integer> entry = iter.next();
+            if(entry.getValue().intValue()<frequence){
+                iter.remove();
             }
         }
         return headers;
-    }*/
-
-    private static Map<String, Integer> addCells(Map<String, Integer> initial, Map<String, Integer> toadd) {
-        //TODO: add rows if the cell doesn't exists, otherwise add counter.
-        return initial;
     }
 
 }

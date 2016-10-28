@@ -19,6 +19,7 @@ public class Main {
         //TODO: use the data in the pages listed in checkwords.txt in order to distinct between the header and
         // cell values in tables
         HeaderList hlist = new HeaderList("checkwords.txt");
+        hlist.printHeaders();
         String nFile=new String("enwiktionary-20160305-pages-articles.xml");
         SAXParserFactory factory = SAXParserFactory.newInstance();
         try {
