@@ -17,7 +17,7 @@ import java.util.Set;
  */
 public class HeaderList {
     //'frequence' is the min number of times that a word has to appear in order to be considered header.
-    private final int frequence=5;
+    private static final int frequence=15;
     private Map<String, Integer> headers = new HashMap<>();
 
     public HeaderList(String nfile) {
@@ -25,10 +25,14 @@ public class HeaderList {
         try {
             String currline;
             reader = new BufferedReader(new FileReader(nfile));
+            int count=0;
             while((currline=reader.readLine()) != null) {
+                count++;
                 headers=frequentCells(currline,headers);
+                System.out.print(" "+count);
             }
-            headers=removeNotFrequent(headers,frequence);
+            System.out.println();
+            headers=removeNotFrequent(headers);
         }
         catch (IOException e) {}
     }
@@ -62,13 +66,23 @@ public class HeaderList {
                         Elements cells = row.children();
                         for (Element cell : cells) {
                             if (cell.hasText()) {
-                                String celltext = cell.text().trim();
+                                String celltext = cell.text().trim().toUpperCase();
                                 if (!celltext.isEmpty()) {
                                     if (headers.containsKey(celltext)) {
-                                        headers.put(celltext, headers.get(celltext)+1);
+                                        if (cell.tagName().equalsIgnoreCase("th")) {
+                                            headers.put(celltext, headers.get(celltext) + frequence);
+                                        }
+                                        else {
+                                            headers.put(celltext, headers.get(celltext) + 1);
+                                        }
                                     }
                                     else {
-                                        headers.put(celltext, new Integer(1));
+                                        if (cell.tagName().equalsIgnoreCase("th")) {
+                                            headers.put(celltext, new Integer(frequence));
+                                        }
+                                        else {
+                                            headers.put(celltext, new Integer(1));
+                                        }
                                     }
                                 }
                             }
@@ -81,7 +95,7 @@ public class HeaderList {
         return headers;
     }
 
-    private static Map<String, Integer> removeNotFrequent(Map<String, Integer> headers, int frequence) {
+    private static Map<String, Integer> removeNotFrequent(Map<String, Integer> headers) {
         Iterator<Map.Entry<String,Integer>> iter = headers.entrySet().iterator();
         while (iter.hasNext()) {
             Map.Entry<String,Integer> entry = iter.next();
