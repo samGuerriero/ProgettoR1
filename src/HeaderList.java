@@ -1,5 +1,6 @@
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.BufferedReader;
@@ -15,7 +16,7 @@ import java.util.Map;
 public class HeaderList {
     //'frequence' is the min number of times that a word has to appear in order to be considered header.
     private final int frequence=5;
-    private Map<String, Integer> headers;
+    private Map<String, Integer> headers = new HashMap<>();
 
     public HeaderList(String nfile) {
         BufferedReader reader;
@@ -23,7 +24,7 @@ public class HeaderList {
             String currline;
             reader = new BufferedReader(new FileReader(nfile));
             while((currline=reader.readLine()) != null) {
-                headers=addCells(headers,frequentCells(currline));
+                headers=frequentCells(currline,headers);
             }
         }
         catch (IOException e) {}
@@ -33,8 +34,8 @@ public class HeaderList {
         return new HashMap<>(headers);
     }
 
-    private static Map<String, Integer> frequentCells(String page){
-        Map<String, Integer> retvalue=new HashMap<>();
+    private static Map<String, Integer> frequentCells(String page, Map<String,Integer> headers){
+        //Map<String, Integer> retvalue=new HashMap<>();
         //TODO: parse cells and count them (hint: remove whitespaces at the beginning and the end of the string by using trim() and use frequence as threshold)
         try {
             //Open the Wiktionary page
@@ -42,11 +43,46 @@ public class HeaderList {
             //Get all the tables
             Elements tables= doc.getElementsByTag("table");
             //Extract the words from the cells and check them
-            //TODO
+            for (Element table : tables) {
+                if (!(table.className().equalsIgnoreCase("audiotable")||table.className().equalsIgnoreCase("toc"))) {
+                    Elements rows=table.getElementsByTag("tr");
+                    for (Element row : rows) {
+                        Elements cells = row.children();
+                        for (Element cell : cells) {
+                            if (cell.hasText()) {
+                                String celltext = cell.text().trim();
+                                if (!celltext.isEmpty()) {
+                                    if (headers.containsKey(celltext)) {
+                                        headers.put(celltext, headers.get(celltext)+1);
+                                    }
+                                    else {
+                                        headers.put(celltext, new Integer(1));
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
         catch (IOException e) {}
-        return retvalue;
+        return headers;
     }
+
+    /*private static Map<String, Integer> checkCell(Element cell, Map<String, Integer> headers) {
+        if (cell.hasText()) {
+            String celltext = cell.text().trim();
+            if (!celltext.isEmpty()) {
+                if (headers.containsKey(celltext)) {
+                    headers.put(celltext, headers.get(celltext)+1);
+                }
+                else {
+                    headers.put(celltext, new Integer(1));
+                }
+            }
+        }
+        return headers;
+    }*/
 
     private static Map<String, Integer> addCells(Map<String, Integer> initial, Map<String, Integer> toadd) {
         //TODO: add rows if the cell doesn't exists, otherwise add counter.
