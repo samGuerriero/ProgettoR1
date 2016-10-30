@@ -16,12 +16,17 @@ import java.util.Iterator;
 public class HTMLParser {
 
 
-    public HTMLParser( String word ) {
+    /*public HTMLParser( String word ) {
         try {
             Document doc = Jsoup.connect("https://en.wiktionary.org/wiki/" + word).get();
             ParseText(doc, word);
         }
         catch (IOException e) {}
+    }*/
+
+    public HTMLParser( Document doc, String word ) {
+        System.out.println("Title: "+word);
+        ParseText(doc, word);
     }
 
     static boolean allowedPos(String pos) {

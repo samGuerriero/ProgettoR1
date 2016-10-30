@@ -43,6 +43,10 @@ public class HeaderList {
         catch (IOException e) {}
     }
 
+    public HeaderList() {
+        pages_seen=0;
+    }
+
     public Map<String, Integer> getHeaders() {
         return new HashMap<>(headers);
     }
@@ -66,6 +70,7 @@ public class HeaderList {
         //In order to don't store too many values in the hashmap, sometimes (it depends on refresh_freq) we delete the values that are not headers
         if (pages_seen%refresh_freq==0) {
             headers=removeNotFrequent(headers);
+            System.out.println("Not frequent headers removed");
         }
     }
 

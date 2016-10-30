@@ -18,8 +18,8 @@ public class Main {
         //Open the XML file and parse its "titles" for listing the pages that we have to check on Wiktionary
         //TODO: use the data in the pages listed in checkwords.txt in order to distinct between the header and
         // cell values in tables
-        HeaderList hlist = new HeaderList("checkwords.txt");
-        hlist.printHeaders();
+        //HeaderList hlist = new HeaderList("checkwords.txt");
+        //hlist.printHeaders();
         String nFile=new String("enwiktionary-20160305-pages-articles.xml");
         SAXParserFactory factory = SAXParserFactory.newInstance();
         try {
