@@ -95,7 +95,7 @@ public class TitlesHandler extends DefaultHandler {
                         headers.printHeaders();
                         //parse the pages with the old set
                         for (Document page : docChecked) {
-                            HTMLParser hparser = new HTMLParser(page, foundTitle);
+                            HTMLParser hparser = new HTMLParser(page);
                         }
                         docChecked=docToCheck;
                         docToCheck=new ArrayList<>(100);

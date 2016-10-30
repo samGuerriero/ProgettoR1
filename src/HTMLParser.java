@@ -24,9 +24,8 @@ public class HTMLParser {
         catch (IOException e) {}
     }*/
 
-    public HTMLParser( Document doc, String word ) {
-        System.out.println("Title: "+word);
-        ParseText(doc, word);
+    public HTMLParser( Document doc ) {
+        ParseText(doc);
     }
 
     static boolean allowedPos(String pos) {
@@ -43,9 +42,12 @@ public class HTMLParser {
     }
 
     //Parser for the HTML page
-    static void ParseText(Document doc, String word) {
+    static void ParseText(Document doc) {
+        //TODO: get the title word from the doc element
+        String word = "TODO";
         boolean tableflag=false;
         boolean listflag=false;
+        System.out.println("Title: "+word);
         Elements tables= doc.getElementsByTag("table");
         Iterator<Element> tableiterator = tables.iterator();
         while (tableiterator.hasNext()) {
