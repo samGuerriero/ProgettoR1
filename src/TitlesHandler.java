@@ -21,6 +21,7 @@ public class TitlesHandler extends DefaultHandler {
     private List<Document> docToCheck;
     private int counter;
     private HeaderList headers = new HeaderList();
+    private int refresh_freq;
     //private String startWord=null;
 
 
@@ -28,8 +29,9 @@ public class TitlesHandler extends DefaultHandler {
         super();
         startCheck=false;
         counter=0;
-        docChecked=new ArrayList<>(100);
-        docToCheck=new ArrayList<>(100);
+        refresh_freq=headers.getRefreshFreq();
+        docChecked=new ArrayList<>(refresh_freq);
+        docToCheck=new ArrayList<>(refresh_freq);
     }
 
     //in case we want to skip the words until a certain one
@@ -60,9 +62,9 @@ public class TitlesHandler extends DefaultHandler {
             * Here we made a lot of stuff:
             * - Perform continuous learning of the headers directly during the XML parsing. To do this we store the pages
             *   in two lists: one where the words are already used to get the headers and the other one that we haven't
-             *  already used. Once the counter reach the 100 value, we use it to get the headers and we start the parsing
+             *  already used. Once the counter reach the refresh_freq (in example 100) value, we use it to get the headers and we start the parsing
              *  of the pages in the first list. In this way we are sure we got the headers on the basis of the previous
-             *  titles and the next 100 (at least)
+             *  titles and the next refresh_freq (at least)
              *
              *  todo: what happens at the end of the XML file?
             * */
@@ -71,7 +73,7 @@ public class TitlesHandler extends DefaultHandler {
                     docChecked.add(loadPage(foundTitle));
                     counter++;
                     System.out.print(" "+counter);
-                    if (counter>=100) {
+                    if (counter>=refresh_freq) {
                         startCheck=true;
                         //start the training of the header set
                         for (Document page : docChecked) {
@@ -85,7 +87,7 @@ public class TitlesHandler extends DefaultHandler {
                     docToCheck.add(loadPage(foundTitle));
                     counter++;
                     System.out.print(" "+counter);
-                    if (counter>=100) {
+                    if (counter>=refresh_freq) {
                         //train the header set with the new set
                         for (Document page : docToCheck) {
                             headers.addTables(page);
@@ -98,7 +100,7 @@ public class TitlesHandler extends DefaultHandler {
                             HTMLParser hparser = new HTMLParser(page);
                         }
                         docChecked=docToCheck;
-                        docToCheck=new ArrayList<>(100);
+                        docToCheck=new ArrayList<>(refresh_freq);
                     }
                 }
             }

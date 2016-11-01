@@ -62,6 +62,10 @@ public class HeaderList {
         return 0;
     }
 
+    public int getRefreshFreq() {
+        return refresh_freq;
+    }
+
     //This function is used in order to learn continuously new headers
     public void addTables(Document doc) {
         Map<String, Integer> pageheaders = getPageCells(doc);
