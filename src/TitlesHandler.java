@@ -34,13 +34,6 @@ public class TitlesHandler extends DefaultHandler {
         docToCheck=new ArrayList<>(refresh_freq);
     }
 
-    //in case we want to skip the words until a certain one
-    /*public TitlesHandler(String startFrom) {
-        super();
-        startWord=new String(startFrom);
-        startCheck=false;
-    }*/
-
     @Override
     public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
         if (qName.equalsIgnoreCase("title")) {

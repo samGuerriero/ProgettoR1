@@ -22,27 +22,6 @@ public class HeaderList {
     private Map<String, Integer> headers = new HashMap<>();
     private int pages_seen;
 
-    public HeaderList(String nfile) {
-        pages_seen=0;
-        BufferedReader reader;
-        try {
-            String currline;
-            reader = new BufferedReader(new FileReader(nfile));
-            int count=0;
-            while((currline=reader.readLine()) != null) {
-                count++;
-                //headers=frequentCells(currline,headers);
-                Map<String, Integer> pageheaders=frequentCells(currline);
-                System.out.print(" "+count);
-                headers=addCells(pageheaders, headers);
-                pages_seen++;
-            }
-            System.out.println();
-            headers=removeNotFrequent(headers);
-        }
-        catch (IOException e) {}
-    }
-
     public HeaderList() {
         pages_seen=0;
     }
