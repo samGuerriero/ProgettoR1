@@ -54,10 +54,18 @@ public class HTMLParser {
         while (tableiterator.hasNext()) {
             tableflag=true;
             Element table = tableiterator.next();
-            //TODO: implement the class used below and the clesses related to it, then choose how to use them
-            PrepTable p_table = ParseTable(table, word);
+            //TODO: implement the class used below and the classes related to it, then choose how to use them
+            //The table has always class attribute which contains the word "inflection-table"
+            //Note that some pages may present more inflection tables, in multiple languages: you would only take 
+            //the first one, as it is linked to the one main language; 
+            //an example is at https://en.wiktionary.org/wiki/parlare ).
+			if (table.className().equalsIgnoreCase("inflection-table")||table.className().contains("inflection-table")){
+            		PrepTable p_table = ParseTable(table, word);
+            		break;
+			}
         }
-        if (!tableflag) System.out.println("\tNo tables for this word");
+        if (!tableflag) 
+        	System.out.println("\tNo tables for this word");
         //Parse the Parenthetical lists
         Elements lists = doc.getElementsByTag("p");
         Iterator<Element> listiterator = lists.iterator();
@@ -66,28 +74,19 @@ public class HTMLParser {
             Element list = listiterator.next();
             ParseList(list);
         }
-        if (!listflag) System.out.println("\tNo lists for this word");
+        if (!listflag) 
+        	System.out.println("\tNo lists for this word");
     }
 
     //Parser for the single table
     static PrepTable ParseTable(Element table, String title) {
-        boolean noskip=true;
-
-        //TODO: find a way to detect if a table is interesting or not for us
-        if (table.className().equalsIgnoreCase("audiotable")||table.className().equalsIgnoreCase("toc")) {
-            noskip=false;
-            //System.out.println("\tTable skipped");
-        }
-        if (noskip) {
-            String lang = getLanguage(table);
-            String pos = getPOS(table, lang);
-            if (lang.isEmpty()) lang = "Language not found";
-            if (pos.isEmpty()) pos = "Part of Speech not found";
-            if (allowedPos(pos))
-                System.out.println("\t" + lang + "\t" + pos);
-                return new PrepTable(table, title, lang, pos);
-        }
-        return null;
+    	String lang = getLanguage(table);
+    	String pos = getPOS(table, lang);
+        if (lang.isEmpty()) lang = "Language not found";
+        if (pos.isEmpty()) pos = "Part of Speech not found";
+        if (allowedPos(pos))
+            System.out.println("\t" + lang + "\t" + pos);
+        return new PrepTable(table, title, lang, pos);
     }
 
     //Parser for the single list
