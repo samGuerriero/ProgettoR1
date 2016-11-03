@@ -43,8 +43,9 @@ public class HTMLParser {
 
     //Parser for the HTML page
     static void ParseText(Document doc) {
-        //TODO: get the title word from the doc element
-        String word = "TODO";
+    	//Get the title word from the doc element, it is in the head and in the form " word - Wiktionary", we only need the word
+    	String headTitle = doc.title();
+    	String word = headTitle.substring(0, headTitle.indexOf(' '));
         boolean tableflag=false;
         boolean listflag=false;
         System.out.println("Title: "+word);
