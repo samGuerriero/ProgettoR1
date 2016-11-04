@@ -105,6 +105,17 @@ public class TitlesHandler extends DefaultHandler {
         }
     }
 
+    //Extract the info from the remaining pages when the XML file ends up.
+    @Override
+    public void endDocument() throws SAXException {
+        for (Document page : docChecked) {
+            HTMLParser hparser = new HTMLParser(page);
+        }
+        for (Document page : docToCheck) {
+            HTMLParser hparser = new HTMLParser(page);
+        }
+    }
+
     private static Document loadPage(String title) {
         try {
             Document doc = Jsoup.connect("https://en.wiktionary.org/wiki/" + title).get();
