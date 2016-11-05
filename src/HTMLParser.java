@@ -52,27 +52,33 @@ public class HTMLParser {
         Elements tables= doc.getElementsByTag("table");
         Iterator<Element> tableiterator = tables.iterator();
         while (tableiterator.hasNext()) {
-            tableflag=true;
             Element table = tableiterator.next();
             //TODO: implement the class used below and the classes related to it, then choose how to use them
             //The table has always class attribute which contains the word "inflection-table"
-            //Note that some pages may present more inflection tables, in multiple languages: you would only take 
-            //the first one, as it is linked to the one main language; 
             //an example is at https://en.wiktionary.org/wiki/parlare ).
 			if (table.className().equalsIgnoreCase("inflection-table")||table.className().contains("inflection-table")){
             		PrepTable p_table = ParseTable(table, word);
-            		break;
+                    tableflag=true;
 			}
         }
         if (!tableflag) 
         	System.out.println("\tNo tables for this word");
-        //Parse the Parenthetical lists
-        Elements lists = doc.getElementsByTag("p");
+        //Parse the Parenthetical lists. Typically, you would have a h3 section with the POS (Noun, Verb..) and 
+        //the next element is the p which contains the parenthetical list of inflection
+        //an example is at https://en.wiktionary.org/wiki/parlare
+        Elements lists = doc.getAllElements();
         Iterator<Element> listiterator = lists.iterator();
         while (listiterator.hasNext()) {
-            listflag=true;
             Element list = listiterator.next();
-            ParseList(list);
+            for (String pos: allowedpos){
+        		list.tag();
+        		//if the actual element is an h3 and has as id a known POS, then the next element is the p containing the inflection list
+				if(Tag.isKnownTag("h3") && list.id().equalsIgnoreCase(pos)){
+        				Element l = listiterator.next();
+        				ParseList(l);
+        				listflag=true;
+        		}
+            }
         }
         if (!listflag) 
         	System.out.println("\tNo lists for this word");
