@@ -96,13 +96,28 @@ public class HTMLParser {
 
     //Parser for the single list
     static void ParseList(Element list) {
-        String lang = getLanguage(list);
+    	String lang = getLanguage(list);
         String pos = getPOS(list, lang);
         if (lang.isEmpty()) lang = "Language not found";
         if (pos.isEmpty()) pos = "Part of Speech not found";
         if (allowedPos(pos))
             System.out.println("\t" + lang + "\t" + pos);
+        //in the list, the i contains the header (e.g., comparative, 3rd person,..) and the successive span contains the corresponding inflection
+        Iterator<Element> listiterator = list.children().iterator();
+        while (listiterator.hasNext()) {
+        	List<WordHeaders> listheaders = new ArrayList<>();
+        	Element el = listiterator.next();
+        	el.tag();
+			if(Tag.isKnownTag("i")){
+				//TODO: is it el.data or el.text???
+        		WordHeaders wh = new WordHeaders(1,1,el.data());
+        		listheaders.add(wh);
+        		String inflection = listiterator.next().data();
+            	//TODO: I don't know how to save the data..we have the header and the corresponding inflection, where do I put the inflection?
 
+        	}
+        	Word w = new Word(word,listheaders);
+        }
     }
 
     //Get the language of a node (usually of a table)
