@@ -70,14 +70,13 @@ public class HTMLParser {
         Iterator<Element> listiterator = lists.iterator();
         while (listiterator.hasNext()) {
             Element list = listiterator.next();
-            for (String pos: allowedpos){
-        		list.tag();
-        		//if the actual element is an h3 and has as id a known POS, then the next element is the p containing the inflection list
-				if(Tag.isKnownTag("h3") && list.id().equalsIgnoreCase(pos)){
-        				Element l = listiterator.next();
-        				ParseList(l);
-        				listflag=true;
-        		}
+            list.tag();
+        	//if the actual element is an h3 and has as id a known POS, then the next element is the p containing the inflection list
+        	//best example is https://en.wiktionary.org/wiki/able
+            if(Tag.isKnownTag("h3") && (list.id().contains("Noun")||list.id().contains("Verb")||list.id().contains("Adjective"))){
+        		Element l = listiterator.next();
+        		ParseList(l);
+        		listflag=true;
             }
         }
         if (!listflag) 
@@ -97,7 +96,6 @@ public class HTMLParser {
 
     //Parser for the single list
     static void ParseList(Element list) {
-        boolean noskip=true;
         String lang = getLanguage(list);
         String pos = getPOS(list, lang);
         if (lang.isEmpty()) lang = "Language not found";
