@@ -46,6 +46,7 @@ public class TitlesHandler extends DefaultHandler {
         //maybe useless for us
     }
     
+    
     //to access the headers in PrepTable
     public HeaderList getHeaders(){
     	return headers;
@@ -107,6 +108,17 @@ public class TitlesHandler extends DefaultHandler {
             }*/
 
             title = false;
+        }
+    }
+
+    //Extract the info from the remaining pages when the XML file ends up.
+    @Override
+    public void endDocument() throws SAXException {
+        for (Document page : docChecked) {
+            HTMLParser hparser = new HTMLParser(page);
+        }
+        for (Document page : docToCheck) {
+            HTMLParser hparser = new HTMLParser(page);
         }
     }
 
