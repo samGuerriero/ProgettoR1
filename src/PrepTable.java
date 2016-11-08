@@ -1,6 +1,8 @@
 import org.jsoup.nodes.Element;
 
 import java.util.List;
++import java.util.ArrayList;
++import java.util.Iterator;
 
 /**
  * Created by marco on 26/10/16.
@@ -42,7 +44,7 @@ public class PrepTable {
         		//else the element is an inflection word, create the Word and associate its headers to it wrt the position
         		else{
         			String inflection = el.ownText();
-        			////////////
+        		
         		}
     			//TODO output
         		c++;

@@ -7,6 +7,7 @@ import java.util.List;
 public class Word {
     private String word;
     private List<WordHeaders> headers;
+    private WordHeaders header;
     
     public Word(String word,List<WordHeaders> headers){
     	this.word = word;
