@@ -105,18 +105,16 @@ public class HTMLParser {
         //in the list, the i contains the header (e.g., comparative, 3rd person,..) and the successive span contains the corresponding inflection
         Iterator<Element> listiterator = list.children().iterator();
         while (listiterator.hasNext()) {
-        	List<WordHeaders> listheaders = new ArrayList<>();
+        	//in the list, you have one only header associated to each inflection
         	Element el = listiterator.next();
         	el.tag();
 			if(Tag.isKnownTag("i")){
-				//TODO: is it el.data or el.text???
-        		WordHeaders wh = new WordHeaders(1,1,el.data());
-        		listheaders.add(wh);
-        		String inflection = listiterator.next().data();
-            	//TODO: I don't know how to save the data..we have the header and the corresponding inflection, where do I put the inflection?
-
+				//TODO: is it ownText???
+        		WordHeaders wh = new WordHeaders(1,1,el.ownText());
+        		String inflection = listiterator.next().ownText();
+        		Word inflectionWord = new Word(inflection, wh);
+            	//TODO: output
         	}
-        	Word w = new Word(word,listheaders);
         }
     }
 

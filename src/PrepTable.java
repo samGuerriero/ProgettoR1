@@ -11,9 +11,11 @@ public class PrepTable {
     private String title;
     private String language;
     private String pos;
+    private Element table;
     private List<Word> word;
 
     public PrepTable(Element table, String title, String language, String pos) {
+    	this.table = table;
         this.title=title;
         this.language=language;
         this.pos=pos;
@@ -21,14 +23,32 @@ public class PrepTable {
     
     public void preprocessTable(TitlesHandler th){
     	HeaderList headers = th.getHeaders();
-    	/*In the table:
-    		-	each row is a tr, either containing all th, or th and corresponding td. In some languages, it may contain all td, 
-    					when the descriptor is expressed together with the inflection (e.g. Infinitive: jesti)
-    		-	th is the header containing the descriptor;
-    		-	td is the inflection, empty if it does not exist;
-    		-	Hence, if you assign to each th its position, you get the priority. */
-
-    	
+    	List<WordHeaders> tableHeaders = new ArrayList<>();
+    	Iterator<Element> tableIterator = this.table.getElementsByTag("tr").iterator();
+    	//iterate through all the rows, i.e. tr
+    	//you need to specify the position of each element in the table wrt row and column, so keep to integers r and c
+    	int r = 0;
+    	int c = 0;
+        while (tableIterator.hasNext()) {
+        	Element row = tableIterator.next();
+        	Iterator<Element> rowIterator = row.children().iterator();
+        	while(rowIterator.hasNext()){
+        		Element el = rowIterator.next();
+        		//if the element is a header, create the WordHeader and set its position in order to give priority
+        		if(headers.getHeaders().keySet().contains(el.ownText())){
+        			WordHeaders wh = new WordHeaders(1,1,el.ownText());
+        			tableHeaders.add(wh);
+        		}
+        		//else the element is an inflection word, create the Word and associate its headers to it wrt the position
+        		else{
+        			String inflection = el.ownText();
+        			
+        		}
+    			//TODO output
+        		c++;
+        	}
+        	r++;
+        }
     }
 
 	public List<Word> getWord() {
